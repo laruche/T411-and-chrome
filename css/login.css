@@ -1,0 +1,12 @@
+body {
+  width: 250px;
+}
+
+p {
+  margin: 0;
+  text-align: center;
+}
+
+form {
+  padding: 25px;
+}
