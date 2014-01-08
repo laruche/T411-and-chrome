@@ -43,12 +43,12 @@ var getRatio = function() {
         
         ratio = ratio.toString().replace('.', ',').substr(0,4);
         chrome.browserAction.setBadgeText({text: ratio});
-        chrome.browserAction.setPopup({popup : 'userStats.html'})
+        chrome.browserAction.setPopup({popup : 'html/userStats.html'})
       });
     } else {
       chrome.browserAction.setBadgeBackgroundColor({color:[254, 51, 0, 255]}); 
       chrome.browserAction.setBadgeText({text: '?'});
-      chrome.browserAction.setPopup({popup : 'popupLogin.html'})
+      chrome.browserAction.setPopup({popup : 'html/popupLogin.html'})
     }
   });
   

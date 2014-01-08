@@ -2,7 +2,7 @@
   "name": "T411 and Me",
 
   "description": "T411 widget ! Suivez votre ration directement depuis le navigateur + télécharger ditectement depuis vos sites préférés :) (Allocine + Betaseries)",
-  "version": "0.1",
+  "version": "0.1.1",
   "permissions": [
     "tabs", "http://*/*", "https://*/*", "storage", "downloads"
   ],
