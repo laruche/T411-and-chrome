@@ -61,8 +61,18 @@ var getSeriesOnSite = function(tab) {
       getSeriesOnBTS(tab);
     } else if(tab.url.substr(0,22) == "http://www.allocine.fr") {
       getFilmOnAllocine(tab);
+    } else {
+      getFilmByMeta(tab);
     }
 };
+
+var getFilmByMeta = function(tab) {
+  chrome.tabs.executeScript(tab.id, { file: "js/jquery.min.js" }, function() {
+    chrome.tabs.executeScript(tab.id, { file: "js/request.js" }, function() {
+      chrome.tabs.executeScript(tab.id, { file: "js/analyse/ogMeta.js" });
+    });
+  });
+}
 
 var getFilmOnAllocine = function(tab) {
   // check page
@@ -163,6 +173,41 @@ var makeDL = function(id) {
     }
   });
 };
+var animedInterval = '';
+window.lastSearch = '';
+
+var makeAnim = function(data) {
+  window.lastSearch = data;
+  var i = 0;
+  chrome.browserAction.setPopup({popup : 'html/userDL.html'})
+  animedInterval = window.setInterval(function() {
+    if(Odd(i))
+      chrome.browserAction.setIcon({path : '../img/38.png'});
+    else
+      chrome.browserAction.setIcon({path : '../icon.png'});
+    i++;    
+  }, 300);
+};
+
+
+var showSearch = function(cb) {
+  var data =  window.lastSearch;
+  var seq = data.query;
+  var dlLinks = '<h1>Choisissez votre fichier à télécharger sur T411.me</h1>',
+      re = new RegExp(' ', 'g'),
+      re2 = new RegExp('\\(.+?\\)', 'g'),
+      re3 = new RegExp('', 'g'),
+      idBox = seq.replace(re, '_').replace(re2, '').substr(0,seq.length-1);
+  jQuery.each(data.torrents, function( index, value ) {
+    dlLinks = dlLinks + '<a href="#" class="dlLinkst411" rel="'+value.id+'">'+value.name+'</a> <br/>(S:'+value.seeders+' / L:'+value.leechers+' / '+convertSizeName(value.size)+') <br/>'
+  });
+  var DLBox = '<div id="'+idBox+'" class="box boxDLT411andMe" >'+dlLinks+'</div>';
+  cb(DLBox, idBox);
+}
+
+var Odd = function (value) {
+    return (value & 1)==1;
+};
 
 getRatio();
 chrome.browserAction.setBadgeText({text: "???"});
@@ -174,9 +219,37 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   getSeriesOnSite(tab);
 });
 
-chrome.tabs.onCreated.addListener(function(tabId, changeInfo, tab) {         
-   getRatio();
+chrome.tabs.onSelectionChanged.addListener(function(tabId) {
+  clearInterval(animedInterval);
+  chrome.browserAction.setPopup({popup : 'html/userStats.html'})
+  chrome.browserAction.setIcon({path: '../icon.png'});
+  chrome.tabs.executeScript(tabId, { file: "js/jquery.min.js" }, function() {
+    chrome.tabs.executeScript(tabId, { file: "js/request.js" }, function() {
+      chrome.tabs.executeScript(tabId, { file: "js/analyse/ogMeta.js" });
+    });
+  });
 });
+
+chrome.tabs.onCreated.addListener(function(tabId, changeInfo, tab) {         
+  clearInterval(animedInterval);
+  getRatio();
+});
+
+
+
+
+function draw(starty, startx) {
+  var canvas = document.getElementById('canvas');
+  var context = canvas.getContext('2d');
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "rgba(0,200,0,255)";
+  context.fillRect(startx % 19, starty % 19, 8, 8);
+  context.fillStyle = "rgba(0,0,200,255)";
+  context.fillRect((startx + 5) % 19, (starty + 5) % 19, 8, 8);
+  context.fillStyle = "rgba(200,0,0,255)";
+  context.fillRect((startx + 10) % 19, (starty + 10) % 19, 8, 8);
+  return context.getImageData(0, 0, 19, 19);
+}
 
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -184,6 +257,30 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   // console.log(sender);
     if (request.method == "makeDL")
       makeDL(request.message);
-    else
+    if (request.method == "makeAnim") {
+      makeAnim(request.message);
+    } else
       sendResponse({}); // snub them.
 });
+
+
+var convertSizeName = function(octet) {
+    var unite = [' octet',' Ko',' Mo',' Go'];
+ 
+    if (octet < 1000) {
+        return octet + unite[0];
+    } else {
+        if (octet < 1000000) {
+            var ko = Math.round((octet/1024)*100)/100;
+            return  ko + unite[1];
+        } else {
+            if (octet < 1000000000) {
+                var mo = Math.round((octet/(1024*1024))*100)/100;
+                return mo + unite[2];
+            } else {
+                var go = Math.round((octet/(1024*1024*1024))*100)/100;
+                return go + unite[3];
+            }
+        }
+    }
+}

@@ -1,16 +1,15 @@
 {
   "name": "T411 and Me",
 
-  "description": "T411 widget ! Suivez votre ration directement depuis le navigateur + télécharger ditectement depuis vos sites préférés :) (Allocine + Betaseries)",
-  "version": "0.1.1",
+  "description": "T411 widget ! Suivez votre ratio directement depuis le navigateur + télécharger automatiquement depuis vos sites préférés :) ",
+  "version": "0.2",
   "permissions": [
     "tabs", "http://*/*", "https://*/*", "storage", "downloads"
   ],
   "icons": { "128": "icon.png" },
   "background": {
-    "scripts": ["js/jquery.min.js","js/background.js"],
-    "persistent": true
-  },  
+    "page": "html/background.html"
+  },
   "browser_action": {
       "default_title": "Set this page's color.",
       "default_icon": "icon.png",
