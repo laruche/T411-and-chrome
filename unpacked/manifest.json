@@ -2,7 +2,7 @@
   "name": "T411 and Me",
 
   "description": "T411 widget ! Suivez votre ratio directement depuis le navigateur + télécharger automatiquement depuis vos sites préférés :) ",
-  "version": "0.2",
+  "version": "0.2.1",
   "permissions": [
     "tabs", "http://*/*", "https://*/*", "storage", "downloads"
   ],

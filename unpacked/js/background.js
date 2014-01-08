@@ -187,6 +187,10 @@ var makeAnim = function(data) {
       chrome.browserAction.setIcon({path : '../icon.png'});
     i++;    
   }, 300);
+
+  window.setTimeout(function() {
+    clearInterval(animedInterval);
+  }, 20000)
 };
 
 
@@ -215,12 +219,15 @@ chrome.browserAction.setBadgeBackgroundColor({color:[7, 149, 0, 255]});
 
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  console.log(clearInterval(animedInterval));
+  chrome.browserAction.setPopup({popup : 'html/userStats.html'})
+  chrome.browserAction.setIcon({path: '../icon.png'});
   getRatio();
   getSeriesOnSite(tab);
 });
 
 chrome.tabs.onSelectionChanged.addListener(function(tabId) {
-  clearInterval(animedInterval);
+  console.log(clearInterval(animedInterval));
   chrome.browserAction.setPopup({popup : 'html/userStats.html'})
   chrome.browserAction.setIcon({path: '../icon.png'});
   chrome.tabs.executeScript(tabId, { file: "js/jquery.min.js" }, function() {
