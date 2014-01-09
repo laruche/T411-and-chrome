@@ -1,5 +1,6 @@
 $(document).ready(function() {
   var bg = chrome.extension.getBackgroundPage();
+  bg.killAnim();
   bg.showSearch(function(DLBox, idBox) {
     console.log(DLBox);
     $('.searchList').html(DLBox);

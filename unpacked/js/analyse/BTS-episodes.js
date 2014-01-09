@@ -32,7 +32,7 @@ var bouclePage = function() {
       });
     });
   } else {
-    setTimeout(bouclePage(),1000);
+    setTimeout(bouclePage(),5000);
   }
   
 };

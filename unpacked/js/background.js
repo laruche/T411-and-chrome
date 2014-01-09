@@ -177,20 +177,30 @@ var animedInterval = '';
 window.lastSearch = '';
 
 var makeAnim = function(data) {
-  window.lastSearch = data;
-  var i = 0;
-  chrome.browserAction.setPopup({popup : 'html/userDL.html'})
-  animedInterval = window.setInterval(function() {
-    if(Odd(i))
-      chrome.browserAction.setIcon({path : '../img/38.png'});
-    else
-      chrome.browserAction.setIcon({path : '../icon.png'});
-    i++;    
-  }, 300);
+  if(data.torrents.length > 0) {
+    window.lastSearch = data;
+    var i = 0;
+    chrome.browserAction.setPopup({popup : 'html/userDL.html'})
+    animedInterval = window.setInterval(function() {
+      if(Odd(i))
+        chrome.browserAction.setIcon({path : '../img/38.png'});
+      else
+        chrome.browserAction.setIcon({path : '../icon.png'});
+      i++;    
+    }, 300);
 
-  window.setTimeout(function() {
-    clearInterval(animedInterval);
-  }, 20000)
+    window.setTimeout(function() {
+      clearInterval(animedInterval);
+      chrome.browserAction.setPopup({popup : 'html/userStats.html'})
+      chrome.browserAction.setIcon({path: '../icon.png'});
+    }, 15000)
+  }
+};
+
+var killAnim = function() {
+  clearInterval(animedInterval);
+  chrome.browserAction.setPopup({popup : 'html/userStats.html'})
+  chrome.browserAction.setIcon({path: '../icon.png'});
 };
 
 
@@ -210,7 +220,7 @@ var showSearch = function(cb) {
 }
 
 var Odd = function (value) {
-    return (value & 1)==1;
+  return (value & 1)==1;
 };
 
 getRatio();
@@ -219,7 +229,7 @@ chrome.browserAction.setBadgeBackgroundColor({color:[7, 149, 0, 255]});
 
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  console.log(clearInterval(animedInterval));
+  clearInterval(animedInterval);
   chrome.browserAction.setPopup({popup : 'html/userStats.html'})
   chrome.browserAction.setIcon({path: '../icon.png'});
   getRatio();
@@ -227,7 +237,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 });
 
 chrome.tabs.onSelectionChanged.addListener(function(tabId) {
-  console.log(clearInterval(animedInterval));
+  clearInterval(animedInterval);
   chrome.browserAction.setPopup({popup : 'html/userStats.html'})
   chrome.browserAction.setIcon({path: '../icon.png'});
   chrome.tabs.executeScript(tabId, { file: "js/jquery.min.js" }, function() {
